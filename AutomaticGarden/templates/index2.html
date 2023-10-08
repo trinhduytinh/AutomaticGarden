@@ -1,0 +1,113 @@
+<!-- myapp/templates/myapp/control.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Điều khiển tưới cây từ xa</title>
+    <!-- Latest compiled and minified CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container mt-3">
+      <div class="row">
+        <h1 class="text-center">Điều khiển tưới cây từ xa</h1>
+        <h3 class="text-center mt-2">Đèn đang {{ light_status }}</h3>
+        <h3 class="text-center mt-2">Tưới cây: {{ watering_status }}</h3>
+      </div>
+    </div>
+    <div class="container mt-3 den">
+      <div class="row">
+        <h3>Điều khiển đèn</h3>
+      </div>
+      <div class="row">
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <form method="post" action="{% url 'control_lights_and_watering' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="light_on" />
+            <samp class="text-center text-black">Bật đèn</samp>
+            <button class="btn btn-primary" type="submit">On</button>
+          </form>
+          <form method="post" action="{% url 'control_lights_and_watering' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="light_off" />
+            <samp class="text-center">Tắt đèn</samp>
+            <button class="btn btn-primary" type="submit">Off</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="container mt-3 den">
+      <div class="row">
+        <h3>Điều khiển tưới cây</h3>
+      </div>
+      <div class="row">
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <form method="post" action="{% url 'control_lights_and_watering' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="watering_start" />
+            <samp class="text-center text-black">Tưới cây</samp>
+            <button class="btn btn-primary" type="submit">Tưới cây</button>
+          </form>
+          <form method="post" action="{% url 'control_lights_and_watering' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="watering_stop" />
+            <samp class="text-center">Ngừng tưới</samp>
+            <button class="btn btn-primary" type="submit">Ngừng tưới</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+      // Khởi tạo cấu hình Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyDDuNEqgG_VH0deVFt7Iq4HTYTxQAcSuNE",
+        authDomain: "automatic-garde.firebaseapp.com",
+        databaseURL: "https://automatic-garde-default-rtdb.firebaseio.com",
+        projectId: "automatic-garde",
+        storageBucket: "automatic-garde.appspot.com",
+        messagingSenderId: "198862866102",
+        appId: "1:198862866102:web:ac776223c9b4aba5fc4817",
+        measurementId: "G-MM17GXGDPV",
+      };
+      firebase.initializeApp(firebaseConfig);
+
+      // Tham chiếu đến Firebase Realtime Database
+      var db = firebase.database();
+
+      // Lắng nghe sự kiện thay đổi trên Firebase và cập nhật trang web tự động
+      var lightStatusElement = document.getElementById("light_status");
+      var wateringStatusElement = document.getElementById("watering_status");
+
+      // Lắng nghe sự kiện thay đổi trạng thái đèn
+      db.ref("Data")
+        .child("light")
+        .on("child_changed", function (snapshot) {
+          var lightStatus = snapshot.val();
+          lightStatusElement.textContent = lightStatus === 1 ? "bật" : "tắt";
+          console.log(lightStatus);
+        });
+
+      // Lắng nghe sự kiện thay đổi trạng thái tưới cây
+      db.ref("Data")
+        .child("watering")
+        .on("child_changed", function (snapshot) {
+          var wateringStatus = snapshot.val();
+          wateringStatusElement.textContent =
+            wateringStatus === 1 ? "đang tưới" : "ngừng tưới";
+            console.log(wateringStatus);
+        });
+    </script>
+  </body>
+</html>
