@@ -16,15 +16,25 @@ config={
 firebase = pyrebase.initialize_app(config)
 authe = firebase.auth()
 database = firebase.database()
+
 def index(request):
+    # Fetch data from Firebase
+    data = database.child("Data").get().val()
 
-    channel_name = database.child('Data').child('Name').get().val()
-    channel_sub = database.child('Data').child('Sub').get().val()
+    context = {
+        'data': data
+    }
 
-    return render(request, 'index2.html', {
-        "channel_name": channel_name,
-        "channel_sub": channel_sub
-        })
+    return render(request, 'index.html', context)
+# def index(request):
+
+#     channel_name = database.child('Data').child('Name').get().val()
+#     channel_sub = database.child('Data').child('Sub').get().val()
+
+#     return render(request, 'index2.html', {
+#         "channel_name": channel_name,
+#         "channel_sub": channel_sub
+#         })
 # def listen_to_firebase_changes(request):
 #     # Kết nối đến Firebase Realtime Database
 #     database = firebase.database()

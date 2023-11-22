@@ -8,42 +8,250 @@
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
 
     <!-- Latest compiled JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../static/style.css" />
+
+    <!-- Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <!-- Your Firebase configuration -->
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyDDuNEqgG_VH0deVFt7Iq4HTYTxQAcSuNE",
+        authDomain: "automatic-garde.firebaseapp.com",
+        databaseURL: "https://automatic-garde-default-rtdb.firebaseio.com",
+        projectId: "automatic-garde",
+        storageBucket: "automatic-garde.appspot.com",
+        messagingSenderId: "198862866102",
+        appId: "1:198862866102:web:ac776223c9b4aba5fc4817",
+        measurementId: "G-MM17GXGDPV",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Reference to your Firebase database
+      var database = firebase.database();
+    </script>
   </head>
   <body>
+    <div style="text-align: center" class="container mt-3">
+      <h1>Điều khiển tưới cây từ xa</h1>
+    </div>
     <div class="container mt-3">
       <div class="row">
-        <h1 class="text-center">Điều khiển tưới cây từ xa</h1>
-        <h3 class="text-center mt-2">Đèn đang bật</h3>
-        <h3 class="text-center mt-2">Đang tưới cây</h3>
-      </div>
-    </div>
-    <div class="container mt-3 den">
-      <div class="row">
-        <h3>Điều khiển đèn</h3>
-      </div>
-      <div class="row">
-        <div class="d-grid gap-2 col-6 mx-auto">
-          <samp class="text-center text-black">Bật đèn</samp>
-          <button class="btn btn-primary" type="button">On</button>
-          <samp class="text-center">Tắt đèn</samp>
-          <button class="btn btn-primary" type="button">Off</button>
+        <div class="col-6">
+          <div class="card mx-auto" style="width: 25rem">
+            <img
+              src="https://kosmen.vn/upload/images/do-am-va-nhiet-do.png"
+              class="card-img-top"
+              alt="..." />
+            <div class="card-body">
+              <p class="card-text">
+                <i class="bi bi-thermometer-sun"></i> Nhiệt độ:
+                <span id="temperatureValue">30</span>
+                <i class="bi bi-thermometer-snow"></i> Độ ẩm:
+                <span id="humidityValue">40</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card mx-auto" style="width: 26rem">
+            <img
+              src="https://nongnghiepthuanthien.vn/wp-content/uploads/2020/08/do-am-trong-dat-min.jpg"
+              class="card-img-top"
+              alt="..." />
+            <div class="card-body">
+              <p class="card-text">
+                <i class="bi bi-thermometer-snow"></i> Độ ẩm:
+                <span id="humidity2Value">40</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="container mt-3 den">
+    <div class="container mt-3">
       <div class="row">
-        <h3>Điều khiển tưới cây</h3>
-      </div>
-      <div class="row">
-        <div class="d-grid gap-2 col-6 mx-auto">
-            <button class="btn btn-primary" type="button">Tưới cây</button>
-            <button class="btn btn-primary mt-2" type="button">Ngưng tưới</button>
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <div style="text-align: center" class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                Máy bơm <i class="bi bi-ev-station"></i>
+              </h5>
+              <p id="pumpStatus" class="card-text">
+                Trạng thái: Đang hoạt động
+              </p>
+              <button
+                id="pumpOnButton"
+                type="button"
+                class="btn btn-outline-success">
+                Bật
+              </button>
+              <button
+                id="pumpOffButton"
+                type="button"
+                class="btn btn-outline-danger">
+                Tắt
+              </button>
+            </div>
           </div>
+        </div>
+        <div class="col-sm-6">
+          <div style="text-align: center" class="card">
+            <div class="card-body">
+              <h5 class="card-title">Cánh quạt <i class="bi bi-fan"></i></h5>
+              <p id="fanStatus" class="card-text">Trạng thái: Đang hoạt động</p>
+              <button
+                id="fanOnButton"
+                type="button"
+                class="btn btn-outline-success">
+                Bật
+              </button>
+              <button
+                id="fanOffButton"
+                type="button"
+                class="btn btn-outline-danger">
+                Tắt
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+    <div class="container mt-3">
+      <div class="row">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+          <div style="text-align: center" class="card">
+            <div class="card-body">
+              <h5 class="card-title">
+                Đèn <i class="bi bi-lightbulb-fill"></i>
+              </h5>
+              <p id="lightStatus" class="card-text">
+                Trạng thái: Đang hoạt động
+              </p>
+              <button
+                id="lightOnButton"
+                type="button"
+                class="btn btn-outline-success">
+                Bật
+              </button>
+              <button
+                id="lightOffButton"
+                type="button"
+                class="btn btn-outline-danger">
+                Tắt
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div style="text-align: center" class="card">
+            <div class="card-body">
+              <h5 class="card-title">Hệ thống <i class="bi bi-display"></i></h5>
+              <p id="systemStatus" class="card-text">
+                Trạng thái: Đang hoạt động
+              </p>
+              <button
+                id="systemOnButton"
+                type="button"
+                class="btn btn-outline-success">
+                Bật
+              </button>
+              <button
+                id="systemOffButton"
+                type="button"
+                class="btn btn-outline-danger">
+                Tắt
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function updateView(data) {
+        document.getElementById("temperatureValue").innerText = data.temp;
+        document.getElementById("humidityValue").innerText = data.damp;
+        document.getElementById("humidity2Value").innerText = data.damp;
+
+        var pumpStatus = data.watering === 1 ? "Đang hoạt động" : "Tắt";
+        document.getElementById("pumpStatus").innerText =
+          "Trạng thái: " + pumpStatus;
+
+        var fanStatus = data.fan === 1 ? "Đang hoạt động" : "Tắt";
+        document.getElementById("fanStatus").innerText =
+          "Trạng thái: " + fanStatus;
+
+        var lightStatus = data.light === 1 ? "Đang hoạt động" : "Tắt";
+        document.getElementById("lightStatus").innerText =
+          "Trạng thái: " + lightStatus;
+
+        var systemStatus = data.system === 1 ? "Đang hoạt động" : "Tắt";
+        document.getElementById("systemStatus").innerText =
+          "Trạng thái: " + systemStatus;
+      }
+
+      database.ref("Data").on("value", function (snapshot) {
+        var data = snapshot.val();
+        updateView(data);
+      });
+
+      document
+        .getElementById("pumpOnButton")
+        .addEventListener("click", function () {
+          database.ref("Data/watering").set(1);
+        });
+
+      document
+        .getElementById("pumpOffButton")
+        .addEventListener("click", function () {
+          database.ref("Data/watering").set(0);
+        });
+
+      document
+        .getElementById("fanOnButton")
+        .addEventListener("click", function () {
+          database.ref("Data/fan").set(1);
+        });
+
+      document
+        .getElementById("fanOffButton")
+        .addEventListener("click", function () {
+          database.ref("Data/fan").set(0);
+        });
+
+      document
+        .getElementById("lightOnButton")
+        .addEventListener("click", function () {
+          database.ref("Data/light").set(1);
+        });
+
+      document
+        .getElementById("lightOffButton")
+        .addEventListener("click", function () {
+          database.ref("Data/light").set(0);
+        });
+
+      document
+        .getElementById("systemOnButton")
+        .addEventListener("click", function () {
+          database.ref("Data/system").set(1);
+        });
+
+      document
+        .getElementById("systemOffButton")
+        .addEventListener("click", function () {
+          database.ref("Data/system").set(0);
+        });
+    </script>
   </body>
 </html>
